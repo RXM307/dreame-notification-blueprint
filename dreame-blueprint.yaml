@@ -20,16 +20,15 @@ trigger:
   - platform: state
     entity_id: !input vacuum_entity
 
-condition: []
-
 action:
-  - service: notify.mobile_app_{{ device_id(!input notify_device) }}
-    data:
-      title: "Dreame Vacuum Update"
-      message: >
-        Your Dreame is now {{ states(!input vacuum_entity) }}.
-        {% if state_attr(!input vacuum_entity, 'error') %}
-        Error: {{ state_attr(!input vacuum_entity, 'error') }}
-        {% endif %}
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    message: >
+      Your Dreame is now {{ states(vacuum_entity) }}.
+      {% if state_attr(vacuum_entity, 'error') %}
+      Error: {{ state_attr(vacuum_entity, 'error') }}
+      {% endif %}
+    title: "Dreame Vacuum Update"
 
 mode: single
