@@ -1,0 +1,35 @@
+blueprint:
+  name: Dreame Vacuum Notifications
+  description: Send a mobile notification when Dreame vacuum changes state.
+  domain: automation
+  input:
+    vacuum_entity:
+      name: Dreame Vacuum
+      description: Select your Dreame vacuum entity
+      selector:
+        entity:
+          domain: vacuum
+    notify_device:
+      name: Notify Device
+      description: Device to send notification to
+      selector:
+        device:
+          integration: mobile_app
+
+trigger:
+  - platform: state
+    entity_id: !input vacuum_entity
+
+condition: []
+
+action:
+  - service: notify.mobile_app_{{ device_id(!input notify_device) }}
+    data:
+      title: "Dreame Vacuum Update"
+      message: >
+        Your Dreame is now {{ states(!input vacuum_entity) }}.
+        {% if state_attr(!input vacuum_entity, 'error') %}
+        Error: {{ state_attr(!input vacuum_entity, 'error') }}
+        {% endif %}
+
+mode: single
