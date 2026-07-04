@@ -9,26 +9,25 @@ blueprint:
       selector:
         entity:
           domain: vacuum
-    notify_device:
-      name: Notify Device
-      description: Device to send notification to
+    notify_service:
+      name: Notify Service
+      description: The notify service to use (e.g., notify.mobile_app_yourphone)
+      default: notify.mobile_app_yourphone
       selector:
-        device:
-          integration: mobile_app
+        text:
 
 trigger:
   - platform: state
     entity_id: !input vacuum_entity
 
 action:
-  - domain: mobile_app
-    type: notify
-    device_id: !input notify_device
-    message: >
-      Your Dreame is now {{ states(vacuum_entity) }}.
-      {% if state_attr(vacuum_entity, 'error') %}
-      Error: {{ state_attr(vacuum_entity, 'error') }}
-      {% endif %}
-    title: "Dreame Vacuum Update"
+  - service: !input notify_service
+    data:
+      title: "Dreame Vacuum Update"
+      message: >
+        Your Dreame is now {{ states(vacuum_entity) }}.
+        {% if state_attr(vacuum_entity, 'error') %}
+        Error: {{ state_attr(vacuum_entity, 'error') }}
+        {% endif %}
 
 mode: single
